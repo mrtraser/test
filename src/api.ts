@@ -66,8 +66,6 @@ export class AgileEngineApi {
     this.client.interceptors.response.use(response => {
       return response.data
     }, async (error) => {
-      const originalRequest = error.config;
-
       if (error.status === 401 && !this.retry) {
         this.retry = true;
         const { token } = await this.getToken();

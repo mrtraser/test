@@ -36,11 +36,11 @@ export function PictureModal({id, onClose}: PictureProps) {
   const [picture, setPicture] = useState<FullPicture>();
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
-  const getFullPicture = async () => {
+  const getFullPicture = useCallback(async () => {
     const pic = await client.getImage(id);
 
     setPicture(pic);
-  }
+  }, [id]);
   const onCloseHandler = useCallback((e) => {
     e.preventDefault();
 
@@ -61,7 +61,7 @@ export function PictureModal({id, onClose}: PictureProps) {
 
   useEffect(() => {
     getFullPicture()
-  }, [id])
+  }, [getFullPicture])
 
   return <PictureDrop>
     { picture

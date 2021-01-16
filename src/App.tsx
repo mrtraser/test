@@ -40,7 +40,7 @@ export function App() {
     setSelectedPicture(undefined);
   }, []);
 
-  const onKeyPress = (e: KeyboardEvent) => {
+  const onKeyPress = useCallback((e: KeyboardEvent) => {
     if (!selectedPicture) return;
 
     switch (e.key) {
@@ -61,7 +61,7 @@ export function App() {
       default:
         return
     }
-  }
+  }, [selectedPicture, state])
 
   useEffect(() => {
     initCall();
@@ -73,7 +73,7 @@ export function App() {
     return () => {
       document.removeEventListener('keydown', onKeyPress)
     }
-  }, [selectedPicture]);
+  }, [onKeyPress]);
 
 
   return (
@@ -94,7 +94,12 @@ export function App() {
         </PictureList>
         { selectedPicture ? <PictureModal id={selectedPicture} onClose={onPictureModalClose}/> : null}
         <ActionsWrapper>
-          <ActionButton disabled={loading} onClick={loadMore}>Load More</ActionButton>
+          <ActionButton
+            disabled={loading || state.page === state.pageCount}
+            onClick={loadMore}
+          >
+            Load More
+          </ActionButton>
         </ActionsWrapper>
       </AppContent>
     </AppWrapper>
@@ -137,6 +142,7 @@ const ActionsWrapper = styled.div`
   padding: 50px;
   display: flex;
   justify-content: center;
+  box-sizing: border-box;
 `;
 
 const ActionButton = styled.button`
