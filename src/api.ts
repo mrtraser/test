@@ -16,6 +16,15 @@ export interface Picture {
   cropped_picture: string;
 }
 
+export interface FullPicture {
+  author: string;
+  camera: string;
+  id: string;
+  full_picture: string;
+  cropped_picture: string;
+  tags: string;
+}
+
 export class AgileEngineApi {
   private client: AxiosInstance;
   private readonly apiKey: string;

@@ -31,7 +31,11 @@ export function App() {
 
   const onPictureClick = useCallback((id: string) => {
     setSelectedPicture(id);
-  }, [])
+  }, []);
+
+  const onPictureModalClose = useCallback(() => {
+    setSelectedPicture(undefined);
+  }, []);
 
   useEffect(() => {
     initCall();
@@ -54,7 +58,7 @@ export function App() {
                 />)
           }
         </PictureList>
-        { selectedPicture ? <PictureModal id={selectedPicture} /> : null}
+        { selectedPicture ? <PictureModal id={selectedPicture} onClose={onPictureModalClose}/> : null}
         <button onClick={loadMore}>Load More</button>
       </AppContent>
     </AppWrapper>
