@@ -34,8 +34,9 @@ const renderPictureInfo = (picture: FullPicture) => {
 
 export function PictureModal({id, onClose}: PictureProps) {
   const [picture, setPicture] = useState<FullPicture>();
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
-  const init = async () => {
+  const getFullPicture = async () => {
     const pic = await client.getImage(id);
 
     setPicture(pic);
@@ -46,23 +47,39 @@ export function PictureModal({id, onClose}: PictureProps) {
     onClose(id);
   }, [id, onClose]);
 
+  const onShare = useCallback(async (e) => {
+    e.preventDefault();
+
+    try {
+      await navigator.clipboard.writeText(picture?.full_picture || 'dude');
+    } catch {
+      return
+    }
+
+    setIsCopied(true);
+  },[picture]);
+
   useEffect(() => {
-    init();
-  }, []);
+    getFullPicture()
+  }, [id])
 
   return <PictureDrop>
     { picture
       ? (<PictureWrapper>
           <div>
-            <img src={picture!.full_picture} alt=""/>
+            <Img src={picture!.full_picture} alt=""/>
           </div>
           <PictureInfo>{
             renderPictureInfo(picture)
           }</PictureInfo>
           <PictureActions>
-            <button>Share</button>
+            <button onClick={onShare}>Share</button>
             <button onClick={onCloseHandler}>Close</button>
           </PictureActions>
+          <SharedInfo>{isCopied
+            ? `Image URL has been copied to the clipboard`
+            : `Use arrow keys for Prev/Next image`}
+          </SharedInfo>
         </PictureWrapper>)
      : null }
   </PictureDrop>
@@ -82,6 +99,8 @@ const PictureDrop = styled.div`
 
 const PictureWrapper = styled.div`
   position: relative;
+  max-width: 100%;
+  max-height: 100%;
 `;
 
 const PictureInfo = styled.div`
@@ -129,4 +148,16 @@ const StyledAlias = styled.a`
       content: '';
     }
   }
+`;
+const SharedInfo = styled.div`
+  background: rgba(0,0,0,.5);
+  position: absolute;
+  bottom: 0;
+  padding: 10px;
+  color: #fff;
+  left: 50%;
+  transform: translate(-50%);
+`;
+const Img = styled.img`
+  display: block;
 `;
